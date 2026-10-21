@@ -29,6 +29,7 @@ const paths = {
 };
 const icon = name => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[name] || paths.home}"/></svg>`;
 const art = `<svg class="home-art" viewBox="0 0 170 180" aria-hidden="true"><circle cx="115" cy="41" r="23" fill="#d9ec9d" opacity=".9"/><path d="M27 180V103l55-43 55 43v77" fill="#aab982"/><path d="m15 110 67-53 68 53" fill="none" stroke="#d9ec9d" stroke-width="5"/><path d="M68 180v-47q14-13 29 0v47" fill="#244d3d"/><rect x="41" y="112" width="18" height="22" rx="7" fill="#d6e7ad"/><rect x="107" y="112" width="18" height="22" rx="7" fill="#d6e7ad"/><path d="M146 180v-52" stroke="#bed092" stroke-width="3"/><ellipse cx="148" cy="132" rx="13" ry="25" fill="#73956e" transform="rotate(20 148 132)"/><ellipse cx="140" cy="155" rx="10" ry="19" fill="#d9ec9d" transform="rotate(-33 140 155)"/><path d="M12 180v-30" stroke="#9cb77a" stroke-width="3"/><ellipse cx="15" cy="152" rx="12" ry="19" fill="#7d9a70" transform="rotate(35 15 152)"/></svg>`;
+let guideIndex = 0;
 let user = null, data = null, tab = 'home', filter = 'all', offline = false, authMode = 'login', inviteToken = '', busy = false, refreshing = false;
 const joinMatch = location.hash.match(/^#join=([a-f0-9]{64})$/);
 if (joinMatch) { inviteToken = joinMatch[1]; authMode = 'join'; history.replaceState(null, '', '/'); }
@@ -68,6 +69,7 @@ function renderApp() {
   $('#app').className = 'app';
   const page = tab === 'home' ? home() : ['shopping','tasks','important'].includes(tab) ? listPage(tab) : tab === 'bills' && user.role === 'mother' ? billsPage() : more();
   $('#app').innerHTML = `<header class="top">${brand()}<div class="header-actions"><button class="icon-btn theme-toggle" data-action="toggle-theme" aria-label="Переключить светлую и тёмную тему">${icon(document.documentElement.dataset.theme==='dark'?'sun':'moon')}</button><button class="profile" data-action="profile" aria-label="Твой профиль"><b>${esc(user.name.slice(0,1).toUpperCase())}</b>${user.role === 'mother' ? 'Мама' : esc(user.name)}</button></div></header><main class="content">${page}</main>${nav()}`;
+  const strip=$('.guide-strip');if(strip)strip.scrollLeft=guideIndex*(strip.clientWidth+12);
 }
 function greeting() { const hour = Number(new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Moscow',hour:'2-digit',hourCycle:'h23'}).format(new Date())); return hour < 5 ? 'Тихой ночи' : hour < 12 ? 'Доброе утро' : hour < 18 ? 'Добрый день' : 'Добрый вечер'; }
 function empty(kind, compact = false) {
@@ -75,10 +77,28 @@ function empty(kind, compact = false) {
   return `<div class="empty"><div class="empty-icon">${icon(itemIcons[kind])}</div><h3>${content[0]}</h3><p>${content[1]}</p>${compact ? `<button class="small-btn" data-action="add-item" data-kind="${kind}">${icon('plus')}Добавить ${kind === 'tasks' ? 'дело' : kind === 'shopping' ? 'покупку' : 'запись'}</button>` : ''}</div>`;
 }
 function sectionHead(title, target, button = 'Все') { return `<div class="section-head"><h2>${title}</h2><button class="small-btn" data-action="tab" data-tab="${target}">${button} ${icon('arrow')}</button></div>`; }
+function appGuide() {
+  const slides = [
+    {icon:'bag',tag:'ПОКУПКИ',title:'Один список.<br>Ничего не забыто.',text:'Добавляйте всё, что нужно домой. Кто идёт в магазин — открывает общий список, а купленное отмечает галочкой.',example:'Молоко, хлеб и что-нибудь к чаю',tab:'shopping',cta:'К покупкам'},
+    {icon:'tasks',tag:'ДЕЛА',title:'Заботы можно<br>разделить.',text:'Запиши дело, возьми его себе или назначь другому. Вы оба видите, кто что делает, и можете менять исполнителя.',example:'«Забрать заказ» → «Я сделаю»',tab:'tasks',cta:'К домашним делам'},
+    {icon:'dinner',tag:'ПЛАНЫ НА ВЕЧЕР',title:'Дома знают,<br>ждать ли к ужину.',text:'Нажми «Буду», «Позже» или «Без меня». При желании укажи время. Ответ относится только к сегодняшнему дню.',example:'Буду позже · к 20:30',action:'guide-dinner',cta:'Ответить про ужин'},
+    {icon:'book',tag:'ЗАПИСКИ И ВАЖНОЕ',title:'Полезные мелочи<br>не теряются.',text:'Оставляйте друг другу записку на главной. Контакты мастеров, адреса и другие постоянные заметки храните в «Важном».',example:'«Тебе оставили суп в холодильнике»',tab:'important',cta:'Открыть важное'},
+    user.role === 'mother'
+      ? {icon:'wallet',tag:'ЛИЧНЫЕ ОПЛАТЫ',title:'Счета по порядку.<br>Без лишней суеты.',text:'Добавь аренду и другие регулярные платежи: сумму и день месяца. Отмечай оплату каждый месяц. Этот раздел виден только тебе.',example:'Это учёт оплат — без перевода денег',tab:'bills',cta:'К моим платежам'}
+      : {icon:'lock',tag:'КАЖДОМУ — СВОЁ',title:'Дом общий.<br>Оплаты — у мамы.',text:'Покупки, дела и заметки доступны вам обоим. Аренду и счета мама ведёт в своём личном разделе — без долгов и деления расходов.',example:'Два профиля. Один общий дом.',tab:'more',cta:'Ваше пространство'}
+  ];
+  return `<section class="app-guide" aria-label="Как работает приложение"><div class="guide-heading"><div><span class="guide-kicker">НЕБОЛЬШОЕ ЗНАКОМСТВО</span><h2>Как устроен наш дом</h2></div><span class="guide-counter" aria-live="polite">${guideIndex+1} / ${slides.length}</span></div><div class="guide-strip" tabindex="0" aria-label="Листайте описание функций">${slides.map((s,i)=>`<article class="guide-slide" aria-label="${i+1} из ${slides.length}"><div class="guide-feature"><span class="guide-icon">${icon(s.icon)}</span><span>${s.tag}</span></div><h3>${s.title}</h3><p>${s.text}</p><div class="guide-example">${icon('check')}<span>${s.example}</span></div><button class="guide-cta" data-action="${s.action || 'tab'}" ${s.tab?`data-tab="${s.tab}"`:''}>${s.cta}${icon('arrow')}</button></article>`).join('')}</div><div class="guide-bottom"><div class="guide-dots" role="group" aria-label="Страницы знакомства">${slides.map((s,i)=>`<button class="guide-dot ${i===guideIndex?'active':''}" data-action="guide-page" data-index="${i}" aria-label="${i+1}. ${s.tag}" aria-pressed="${i===guideIndex}"></button>`).join('')}</div><span>Листай, чтобы познакомиться ${icon('arrow')}</span></div></section>`;
+}
+document.addEventListener('scroll',event=>{
+  const strip=event.target;if(!(strip instanceof Element)||!strip.classList.contains('guide-strip'))return;
+  guideIndex=Math.max(0,Math.min(4,Math.round(strip.scrollLeft/(strip.clientWidth+12))));
+  const counter=$('.guide-counter');if(counter)counter.textContent=`${guideIndex+1} / 5`;
+  document.querySelectorAll('.guide-dot').forEach((dot,i)=>{dot.classList.toggle('active',i===guideIndex);dot.setAttribute('aria-pressed',String(i===guideIndex))});
+},true);
 function home() {
   const date = new Intl.DateTimeFormat('ru-RU',{weekday:'long',day:'numeric',month:'long',timeZone:'Europe/Moscow'}).format(new Date());
   const n = openItems('tasks').length;
-  return `<div class="kicker">${esc(date)}</div><div class="heading-row"><h1>${greeting()}${user.role === 'mother' ? ', мама' : ''}</h1></div><p class="intro">Хорошо, когда дома всё понятно.</p><section class="hero"><h2>Вместе —<br>немного проще.</h2><p>Меньше «а ты не забыл?».<br>Больше времени друг на друга.</p><span class="pill">${icon('heart')} Ваш маленький общий мир</span>${art}</section><div class="section-head"><h2>Кто сегодня к ужину?</h2><span class="pill">${icon('clock')} Сегодня</span></div>${dinnerPanel()}<button class="note" data-action="note"><span class="note-icon">${icon('note')}</span><div><strong>Записка на холодильнике</strong><p>${data.note ? esc(data.note) : '«Ужин в холодильнике» или просто что-то тёплое. Оставь вашу первую записку.'}</p></div><span class="arrow">${icon('chevron')}</span></button>${sectionHead('Домашние мелочи','shopping','Открыть')}<div class="quick-grid"><button class="quick-card" data-action="tab" data-tab="shopping"><span class="count">${openItems('shopping').length}</span><div class="icon">${icon('bag')}</div><b>Купить домой</b><p>${openItems('shopping').length ? 'В одном общем списке' : 'Добавим что-нибудь?'}</p></button><button class="quick-card" data-action="tab" data-tab="tasks"><span class="count">${n}</span><div class="icon">${icon('tasks')}</div><b>Дела по дому</b><p>${n ? 'Разделим заботы' : 'Сегодня без суеты'}</p></button></div>${sectionHead('На ближайшее время','tasks')}<section class="panel list-panel">${n ? openItems('tasks').slice(0,3).map(itemRow).join('') : empty('tasks',true)}</section>${data.members.length < 2 ? inviteCard() : `<p class="footer-note">${icon('heart')} У каждого свои дела. Дом у вас общий.</p>`}`;
+  return `<div class="kicker">${esc(date)}</div><div class="heading-row"><h1>${greeting()}${user.role === 'mother' ? ', мама' : ''}</h1></div><p class="intro">Хорошо, когда дома всё понятно.</p>${appGuide()}<div class="section-head"><h2>Кто сегодня к ужину?</h2><span class="pill">${icon('clock')} Сегодня</span></div>${dinnerPanel()}<button class="note" data-action="note"><span class="note-icon">${icon('note')}</span><div><strong>Записка на холодильнике</strong><p>${data.note ? esc(data.note) : '«Ужин в холодильнике» или просто что-то тёплое. Оставь вашу первую записку.'}</p></div><span class="arrow">${icon('chevron')}</span></button>${sectionHead('Домашние мелочи','shopping','Открыть')}<div class="quick-grid"><button class="quick-card" data-action="tab" data-tab="shopping"><span class="count">${openItems('shopping').length}</span><div class="icon">${icon('bag')}</div><b>Купить домой</b><p>${openItems('shopping').length ? 'В одном общем списке' : 'Добавим что-нибудь?'}</p></button><button class="quick-card" data-action="tab" data-tab="tasks"><span class="count">${n}</span><div class="icon">${icon('tasks')}</div><b>Дела по дому</b><p>${n ? 'Разделим заботы' : 'Сегодня без суеты'}</p></button></div>${sectionHead('На ближайшее время','tasks')}<section class="panel list-panel">${n ? openItems('tasks').slice(0,3).map(itemRow).join('') : empty('tasks',true)}</section>${data.members.length < 2 ? inviteCard() : `<p class="footer-note">${icon('heart')} У каждого свои дела. Дом у вас общий.</p>`}`;
 }
 function dinnerPanel() {
   const mine = data.dinner.find(d => d.user_id === user.id);
@@ -126,6 +146,8 @@ document.addEventListener('click',async event=>{
   const el=event.target.closest('[data-action]');if(!el||el.disabled||busy)return;
   const a=el.dataset.action,id=el.dataset.id;
   try {
+    if(a==='guide-page'){const strip=$('.guide-strip');if(strip)strip.scrollTo({left:Number(el.dataset.index)*(strip.clientWidth+12),behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});return}
+    if(a==='guide-dinner'){document.querySelector('.dinner-top')?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth',block:'start'});return}
     if(a==='close')return closeSheet();
     if(a==='tab')return setTab(el.dataset.tab);
     if(a==='important')return setTab('important');
