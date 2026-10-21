@@ -1,0 +1,58 @@
+:root[data-theme="dark"]{color-scheme:dark;--green:#b6d7a0;--lime:#cfdfa2;--paper:#14251e;--muted:#94a58e;--line:#354337;--orange:#db9c73;background:#0c1712;color:#e0e8d7}
+[data-theme="dark"] body{background:#0c1712}
+[data-theme="dark"] .brand-mark,[data-theme="dark"] .profile b{background:#a9c991;color:#1d3325}
+[data-theme="dark"] .brand,[data-theme="dark"] h1,[data-theme="dark"] h2,[data-theme="dark"] h3{color:#e0e8d7}
+[data-theme="dark"] .profile{background:#29392c;color:#c2cfaf}
+[data-theme="dark"] .hero,[data-theme="dark"] .bill-overview{background:#284b38;border:1px solid #395c40;color:#f1f6e8}
+[data-theme="dark"] .hero h2{color:#f1f6e8}
+[data-theme="dark"] .hero p{color:#bbcfb0}
+[data-theme="dark"] .panel{background:#1e3025;border-color:#354337}
+[data-theme="dark"] .intro,[data-theme="dark"] .sub,[data-theme="dark"] .sheet-copy,[data-theme="dark"] .empty p,[data-theme="dark"] .form-note,[data-theme="dark"] .auth-footer{color:#9baa91}
+[data-theme="dark"] .kicker,[data-theme="dark"] .tag,[data-theme="dark"] .sync,[data-theme="dark"] .list-toolbar,[data-theme="dark"] .divider-label,[data-theme="dark"] .footer-note,[data-theme="dark"] .count-heading{color:#8c9e80}
+[data-theme="dark"] .pill,[data-theme="dark"] .take,[data-theme="dark"] .chip,[data-theme="dark"] .menu-row .icon,[data-theme="dark"] .empty-icon{background:#304130;color:#b1c299}
+[data-theme="dark"] .initial{background:#344a32;color:#c5d9a8}
+[data-theme="dark"] .initial.mother{background:#4a3f31;color:#dec6a6}
+[data-theme="dark"] .dinner-icon{background:#403d2a;color:#d8c08c}
+[data-theme="dark"] .choices{background:#14251b}
+[data-theme="dark"] .choice{color:#a7b69b}
+[data-theme="dark"] .choice.selected,[data-theme="dark"] .chip.active{background:#b6d197;color:#223520}
+[data-theme="dark"] .answered,[data-theme="dark"] .small-btn,[data-theme="dark"] .paid{color:#b0ca90}
+[data-theme="dark"] .note{background:#333c28;color:#d3dcbd}
+[data-theme="dark"] .note p{color:#acb792}
+[data-theme="dark"] .note-icon,[data-theme="dark"] .note .arrow{color:#a3b37c}
+[data-theme="dark"] .quick-card{background:#30402b;color:#e0e8d1}
+[data-theme="dark"] .quick-card:nth-child(2){background:#3a382c}
+[data-theme="dark"] .quick-card p{color:#abb89a}
+[data-theme="dark"] .quick-card .icon,[data-theme="dark"] .quick-card .count{color:#afc48e}
+[data-theme="dark"] .quick-card:nth-child(2) .icon,[data-theme="dark"] .quick-card:nth-child(2) .count{color:#c0b697}
+[data-theme="dark"] .row,[data-theme="dark"] .menu-row,[data-theme="dark"] .bill-actions{border-color:#334334}
+[data-theme="dark"] .check{border-color:#617653}
+[data-theme="dark"] .check.checked,[data-theme="dark"] .take.mine{background:#415a32;color:#cfdfb0;border-color:#71915b}
+[data-theme="dark"] .done .row-title{color:#839479}
+[data-theme="dark"] .icon-btn{color:#9aad89}
+[data-theme="dark"] .icon-btn:hover{background:#334532}
+[data-theme="dark"] .nav{background:#14251ef2;border-color:#364433}
+[data-theme="dark"] .nav button{color:#889e7d}
+[data-theme="dark"] .nav button.active{color:#d5e7bb}
+[data-theme="dark"] .nav button.active .nav-icon{background:#3b5530}
+[data-theme="dark"] .primary{background:#b6d197;color:#223520}
+[data-theme="dark"] .primary.light{background:#cbdca1;color:#223520}
+[data-theme="dark"] .primary.outline{background:transparent;border-color:#576f49;color:#c1d8a4}
+[data-theme="dark"] .invite-card,[data-theme="dark"] .info-banner,[data-theme="dark"] .auth-illustration{background:#2d4029;border-color:#3a5034}
+[data-theme="dark"] .invite-card p,[data-theme="dark"] .info-banner{color:#b3c39e}
+[data-theme="dark"] .auth-illustration strong{color:#d8e5c6}
+[data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select,[data-theme="dark"] .auth input,[data-theme="dark"] .add-bar input{background:#15251b;border-color:#40533a;color:#e0e8d7}
+[data-theme="dark"] input::placeholder,[data-theme="dark"] textarea::placeholder{color:#7f9273}
+[data-theme="dark"] label{color:#a8bc92}
+[data-theme="dark"] .add-bar button{background:#b6d197;color:#20351f}
+[data-theme="dark"] dialog{background:#1b2d22;color:#e0e8d7}
+[data-theme="dark"] .sheet-head .icon-btn{background:#30422d}
+[data-theme="dark"] .sheet-grip{background:#4a5d42}
+[data-theme="dark"] .invite-link{background:#2b4028;color:#d2dfbe}
+[data-theme="dark"] .important-card p{color:#b2c1a2}
+[data-theme="dark"] .bill-icon{background:#34462f;color:#b3c798}
+[data-theme="dark"] .money{color:#dde8cb}
+[data-theme="dark"] .danger,[data-theme="dark"] .due,[data-theme="dark"] .error{color:#dfa789}
+[data-theme="dark"] .error-box{background:#493b2a;color:#e0b992}
+[data-theme="dark"] .theme-toggle,[data-theme="dark"] .assign-btn{color:#b6cb9f!important}
+[data-theme="dark"] .auth-mode button,[data-theme="dark"] .arrival,[data-theme="dark"] .link-btn{color:#acc296}
